@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Ziehungen</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Alle Ziehungen</h1>
+
+<button onclick="window.location.href='startseiteLotto.html'">Zurück</button>
+
+<div id="liste"></div>
+
+<script>
+let ziehungen = JSON.parse(localStorage.getItem("ziehungen") || "[]");
+
+function render() {
+    let out = "";
+    ziehungen.forEach(z => {
+        out += `
+            <div class="ziehung">
+                <h3>${z.datum}</h3>
+                <p>Zahlen: ${z.zahlen.join(", ")}</p>
+                <p>Gewinner: ${z.gewinner.join(", ")}</p>
+            </div>
+        `;
+    });
+    document.getElementById("liste").innerHTML = out;
+}
+
+render();
+</script>
+
+</body>
+</html>
