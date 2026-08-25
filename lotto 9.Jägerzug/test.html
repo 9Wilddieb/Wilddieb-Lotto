@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Lotto Übersicht</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Lotto Übersicht</h1>
+
+<button onclick="window.location.href='ziehungen.html'">Alle Ziehungen</button>
+<button onclick="window.location.href='passwort.html'">Lottofee</button>
+
+<table id="lottoTable">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Zahl 1</th>
+            <th>Zahl 2</th>
+            <th>Treffer Zahl 1</th>
+            <th>Treffer Zahl 2</th>
+            <th>Gesamt Treffer</th>
+            <th>Gewinn (€)</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<h2 id="gesamtGewinn"></h2>
+
+<script>
+// -------------------------------
+// Spieler laden
+// -------------------------------
+let spieler = JSON.parse(localStorage.getItem("spieler"));
+if (!spieler) {
+    spieler = [
+        { name: "Abels", z1: 23, z2: 46, t1: 0, t2: 0 },
+        { name: "Broich", z1: 2, z2: 47, t1: 0, t2: 0 },
+        { name: "Flöck", z1: 3, z2: 9, t1:0, t2:0}, 
+        { name: "Franz", z1: 13, z2:45, t1:0, t2:0},
+        { name: "Gehlen", z1: 4, z2: 26, t1:0, t2:0},
+        { name: "Herten", z1:28, z2:33, t1:0, t2:0},
+        { name: "Kirsch", z1:17, z2:21, t1:0, t2:0},
+        { name: "Krahwinkel A.", z1:5, z2:20, t1:0, t2:0},
+        { name: "Krahwinkel N.", z1:40, z2:1, t1:0, t2:0},
+        { name: "Krämer", z1:15, z2:39, t1:0, t2:0},
+        { name: "Mehl", z1:7, z2:36, t1:0, t2:0},
+        { name: "Meurer", z1:29, z2:35, t1:0, t2:0},
+        { name: "Nix", z1:8, z2:27, t1:0, t2:0},
+        { name: "Offermann", z1:6, z2:22, t1:0, t2:0},
+        { name:"Phillipps", z1:14, z2:30, t1:0, t2:0},
+        { name:"Schiffer J.", z1:11, z2:44, t1:0, t2:0},
+        { name:"Schiffer T.", z1:16, z2:34, t1:0, t2:0},
+        { name:"Schnock", z1:19, z2:42, t1:0, t2:0},
+        { name:"Schoenen", z1:25, z2:49, t1:0, t2:0},
+        { name:"Spenrath", z1:24, z2:43, t1:0, t2:0},
+        { name:"V.Bardeleben", z1:32, z2:38, t1:0, t2:0},
+        { name:"Zumbroich", z1:12, z2:48, t1:0, t2:0},
+        { name:"Kasse 10", z1:10, z2:0, t1:0, t2:0},
+        { name:"Kasse 18", z1:18, z2:0, t1:0, t2:0},
+        { name:"Kasse 31", z1:31, z2:0, t1:0, t2:0},
+        { name:"Kasse 37", z1:37, z2:0, t1:0, t2:0},
+        { name:"Kasse 41", z1:41, z2:0, t1:0, t2:0},
+        { name:"Sonderzahlung", z1:50, z2:0, t1:0, t2:0}
+    ];
+
+    localStorage.setItem("spieler", JSON.stringify(spieler));
+}
+
+// -------------------------------
+// Tabelle rendern
+// -------------------------------
+function renderTable() {
+    let tbody = document.querySelector("#lottoTable tbody");
+    tbody.innerHTML = "";
+
+    let gesamt = 0;
+
+    spieler.forEach(s => {
+        let gesTreffer = s.t1 + s.t2;
+        let gewinn = gesTreffer * 5;
+        gesamt += gewinn;
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${s.name}</td>
+                <td>${s.z1}</td>
+                <td>${s.z2}</td>
+                <td>${s.t1}</td>
+                <td>${s.t2}</td>
+                <td>${gesTreffer}</td>
+                <td>${gewinn} €</td>
+            </tr>
+        `;
+    });
+}
+
+renderTable(); // ✔ KORREKT – außerhalb der Funktion
+</script>
+
+</body>
+</html>
