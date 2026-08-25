@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Rangliste</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>🏆 Rangliste</h1>
+
+<button onclick="window.location.href='startseiteLotto.html'">Zurück</button>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Platz</th>
+            <th>Name</th>
+            <th>Treffer</th>
+            <th>Geld (€)</th>
+        </tr>
+    </thead>
+    <tbody id="rankBody"></tbody>
+</table>
+
+<script>
+
+let spieler = JSON.parse(localStorage.getItem("spieler") || "[]");
+let ziehungen = JSON.parse(localStorage.getItem("ziehungen") || "[]");
+
+// -------------------------------
+// Treffer komplett neu berechnen
+// -------------------------------
+function berechneRangliste() {
+
+    let liste = [];
+
+    spieler.forEach(s => {
+
+        let treffer = 0;
+
+        ziehungen.forEach(z => {
+
+            if (z.zahlen.includes(s.z1)) treffer++;
+            if (s.z2 !== 0 && z.zahlen.includes(s.z2)) treffer++;
+        });
+
+        liste.push({
+            name: s.name,
+            treffer: treffer,
+            geld: treffer * 5
+        });
+    });
+
+    // sortieren
+    liste.sort((a,b) => b.treffer - a.treffer);
+
+    return liste;
+}
+
+// -------------------------------
+// anzeigen
+// -------------------------------
+function render() {
+
+    let data = berechneRangliste();
+
+    let html = "";
+
+    data.forEach((s, i) => {
+        html += `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${s.name}</td>
+                <td>${s.treffer}</td>
+                <td>${s.geld} €</td>
+            </tr>
+        `;
+    });
+
+    document.getElementById("rankBody").innerHTML = html;
+}
+
+render();
+
+</script>
+
+</body>
+</html>
