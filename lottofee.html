@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Lottofee</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Lottofee – Neue Ziehung</h1>
+
+<form id="form">
+    <input type="date" id="datum" required>
+    <input type="number" id="zahl1" min="0" max="50" required>
+    <input type="number" id="zahl2" min="0" max="50">
+    <input type="number" id="zahl3" min="0" max="50">
+    <input type="number" id="zahl4" min="0" max="50">
+    <input type="number" id="zahl5" min="0" max="50">
+    <input type="number" id="zahl6" min="0" max="50">
+    <input type="number" id="zahl7" min="0" max="50">
+
+    <button type="submit">Speichern</button>
+</form>
+
+<button onclick="window.location.href='startseiteLotto.html'">Zurück</button>
+
+<hr>
+
+<h2>Archiv der Ziehungen</h2>
+<div id="archiv"></div>
+
+<script>
+
+let spieler = JSON.parse(localStorage.getItem("spieler") || "[]");
+let ziehungen = JSON.parse(localStorage.getItem("ziehungen") || "[]");
+let kasse = JSON.parse(
+    localStorage.getItem("kasse") ||
+    '{"treffer":0,"gewinn":0,"zahlen":[4,5,3,5,6]}'
+);
+
+document.getElementById("form").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let zahlen = [];
+
+    for (let i = 1; i <= 7; i++) {
+        let feld = document.getElementById("zahl" + i);
+
+        if (feld && feld.value !== "") {
+            zahlen.push(Number(feld.value));
+        }
+    }
+
+    let datum = document.getElementById("datum").value;
+
+    if (!datum) {
+        alert("Bitte ein Datum auswählen.");
+        return;
+    }
+
+    let gewinner = [];
+
+    // Treffer zählen
+    spieler.forEach(s => {
+
+        if (zahlen.includes(s.z1)) {
+            s.t1++;
+        }
+
+        if (s.z2 !== 0 && zahlen.includes(s.z2)) {
+            s.t2++;
+        }
+
+        if (
+            zahlen.includes(s.z1) ||
+            (s.z2 !== 0 && zahlen.includes(s.z2))
+        ) {
+            gewinner.push(s.name);
+        }
+    });
+
+    // Ziehung speichern
+    ziehungen.push({
+        datum: datum,
+        zahlen: zahlen,
+        gewinner: gewinner
+    });
+
+    // Local Storage speichern
+    localStorage.setItem("ziehungen", JSON.stringify(ziehungen));
+    localStorage.setItem("spieler", JSON.stringify(spieler));
+    localStorage.setItem("kasse", JSON.stringify(kasse));
+
+    alert("Ziehung gespeichert!");
+
+    // Formular leeren
+    document.getElementById("form").reset();
+
+    // Archiv neu anzeigen
+    renderArchiv();
+});
+
+
+// Archiv anzeigen
+function renderArchiv() {
+
+    let out = "";
+
+    ziehungen.forEach((z, i) => {
+
+        out += `
+            <div class="ziehung">
+                <h3>${z.datum}</h3>
+                <p>Zahlen: ${z.zahlen.join(", ")}</p>
+                <p>Gewinner: ${z.gewinner.length ? z.gewinner.join(", ") : "Keine"}</p>
+                <button onclick="loeschen(${i})">Löschen</button>
+            </div>
+        `;
+    });
+
+    document.getElementById("archiv").innerHTML = out;
+}
+
+
+// Einzelne Ziehung löschen
+function loeschen(index) {
+
+    if (!confirm("Diesen Eintrag wirklich löschen?")) {
+        return;
+    }
+
+    ziehungen.splice(index, 1);
+
+    localStorage.setItem("ziehungen", JSON.stringify(ziehungen));
+
+    renderArchiv();
+}
+
+
+// Beim Laden anzeigen
+renderArchiv();
+
+</script>
+
+</body>
+</html>
